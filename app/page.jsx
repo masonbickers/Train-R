@@ -1,69 +1,87 @@
 "use client";
 
+import { useCallback } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
-const ACCENT = "#E6FF3B";
+const ACCENT = "#E6FF3B"; // SAP neon
 
 export default function Home() {
+  const handleScroll = useCallback((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   return (
     <main className="min-h-screen bg-black text-slate-100">
-      {/* ---------- NAV ---------- */}
-      <header className="fixed top-0 left-0 right-0 z-30 border-b border-white/5 bg-black/60 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-2">
+      {/* ---------- NAV (TRANSPARENT, SAP-LIKE) ---------- */}
+      <header className="fixed inset-x-0 top-0 z-50">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          {/* Brand as text button */}
+          <button
+            type="button"
+            onClick={() => handleScroll("hero")}
+            className="flex items-center gap-2"
+          >
             <div
-              className="relative h-8 w-8 overflow-hidden rounded-xl border border-white/10 bg-black"
+              className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-black text-xs font-bold tracking-[0.2em]"
               style={{ boxShadow: "0 0 24px rgba(230,255,59,0.4)" }}
             >
-              <Image
-                src="/Train-R.png"
-                alt="Train-R logo"
-                fill
-                className="object-contain"
-                priority
-              />
+              TR
             </div>
             <span className="text-sm font-semibold text-slate-200">
               Train-R
             </span>
-          </div>
+          </button>
 
-          <nav className="hidden gap-6 text-xs font-medium text-slate-300 md:flex">
-            <a href="#features" className="hover:text-white">
+          {/* Menu top-right */}
+          <nav className="hidden items-center gap-6 text-[11px] font-medium uppercase tracking-[0.22em] text-slate-300 md:flex">
+            <button
+              type="button"
+              onClick={() => handleScroll("features")}
+              className="hover:text-white"
+            >
               Features
-            </a>
-            <a href="#nutrition" className="hover:text-white">
-              Nutrition
-            </a>
-            <a href="#how" className="hover:text-white">
+            </button>
+            <button
+              type="button"
+              onClick={() => handleScroll("how")}
+              className="hover:text-white"
+            >
               How it works
-            </a>
-            <a href="#pillars" className="hover:text-white">
+            </button>
+            <button
+              type="button"
+              onClick={() => handleScroll("pillars")}
+              className="hover:text-white"
+            >
               Training pillars
-            </a>
-            <a href="#journal" className="hover:text-white">
-              Journal &amp; coach
-            </a>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleScroll("journal")}
+              className="hover:text-white"
+            >
+              Journal
+            </button>
+            <button
+              type="button"
+              onClick={() => handleScroll("cta")}
+              className="rounded-full border border-white/30 px-4 py-1.5 text-[10px] font-semibold text-black"
+              style={{ backgroundColor: ACCENT }}
+            >
+              EARLY ACCESS
+            </button>
           </nav>
-
-          <a
-            href="#cta"
-            className="rounded-full px-4 py-2 text-xs font-semibold text-black"
-            style={{ backgroundColor: ACCENT }}
-          >
-            Get early access
-          </a>
         </div>
       </header>
 
-      {/* space for fixed nav */}
-      <div className="pt-20" />
+      {/* (no extra spacer – header floats over hero like SAP) */}
 
-      {/* ---------- HERO ---------- */}
+      {/* ---------- HERO (FULL HEIGHT) ---------- */}
       <section
         id="hero"
-        className="relative overflow-hidden border-b border-white/5"
+        className="relative flex min-h-screen items-center overflow-hidden border-b border-white/5"
       >
         {/* neon blobs */}
         <motion.div
@@ -78,7 +96,7 @@ export default function Home() {
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="mx-auto flex max-w-6xl flex-col gap-16 px-6 py-16 md:flex-row md:items-center md:py-24">
+        <div className="mx-auto flex max-w-6xl flex-col gap-16 px-6 py-24 md:flex-row md:items-center">
           {/* left */}
           <div className="relative z-10 max-w-xl">
             <motion.p
@@ -100,7 +118,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.05 }}
             >
-              Train like an <span className="text-slate-300">athlete,</span>
+              Train like an{" "}
+              <span className="text-slate-300">athlete,</span>
               <br />
               think like a <span style={{ color: ACCENT }}>coach.</span>
             </motion.h1>
@@ -122,20 +141,22 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.18 }}
             >
-              <a
-                href="#cta"
+              <button
+                type="button"
+                onClick={() => handleScroll("cta")}
                 className="flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-black shadow-lg shadow-[rgba(230,255,59,0.35)]"
                 style={{ backgroundColor: ACCENT }}
               >
                 Get your first block
                 <span className="text-xs">↗</span>
-              </a>
-              <a
-                href="#how"
+              </button>
+              <button
+                type="button"
+                onClick={() => handleScroll("how")}
                 className="text-xs font-medium text-slate-300 underline-offset-4 hover:text-white hover:underline"
               >
                 See how Train-R works
-              </a>
+              </button>
             </motion.div>
 
             <motion.div
@@ -219,10 +240,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- FEATURES STRIP ---------- */}
+      {/* ---------- FEATURES ---------- */}
       <section
         id="features"
-        className="border-b border-white/5 bg-[#050608] py-16 md:py-20"
+        className="border-b border-white/5 bg-[#050608] min-h-screen flex items-center py-16 md:py-20"
       >
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
@@ -262,103 +283,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- NUTRITION SECTION ---------- */}
-      <section
-        id="nutrition"
-        className="border-b border-white/5 bg-black py-16 md:py-20"
-      >
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-2 md:items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-              Fuel that matches the block
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold md:text-3xl">
-              Nutrition wired into your training.
-            </h2>
-            <p className="mt-3 text-sm text-slate-300">
-              The nutrition side of Train-R uses the same SAP-style cards as
-              your app: daily goals, macros, food quality and AI feedback based
-              on what you actually logged today.
-            </p>
-
-            <ul className="mt-5 space-y-2 text-sm text-slate-200">
-              <li>• Set clear calorie &amp; macro targets for each block.</li>
-              <li>• Log meals with quick text or photo-based estimates.</li>
-              <li>
-                • See how today&apos;s intake supports tomorrow&apos;s session
-                load.
-              </li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            className="rounded-3xl border border-white/10 bg-gradient-to-b from-[#05060A] to-[#020308] p-4 text-xs shadow-[0_0_40px_rgba(0,0,0,0.9)]"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <div className="mb-2 flex items-center justify-between text-[11px]">
-              <span className="font-semibold uppercase tracking-[0.16em] text-slate-400">
-                Today • Nutrition
-              </span>
-              <span
-                className="rounded-full px-2 py-1 text-[10px] font-semibold text-black"
-                style={{ backgroundColor: ACCENT }}
-              >
-                2,150 / 2,600 kcal
-              </span>
-            </div>
-
-            <div className="mb-3 grid grid-cols-3 gap-2">
-              <MacroChip label="Protein" value="112 g" />
-              <MacroChip label="Carbs" value="274 g" />
-              <MacroChip label="Fat" value="68 g" />
-            </div>
-
-            <div className="mb-3 rounded-2xl border border-white/12 bg-black/60 px-3 py-3 text-[11px]">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="font-semibold text-slate-100">
-                  Coach note
-                </span>
-                <span className="rounded-full bg-white/5 px-2 py-1 text-[10px] text-slate-300">
-                  Food quality · B+
-                </span>
-              </div>
-              <p className="text-slate-300">
-                You&apos;re close to your calorie target and hit protein. Keep
-                an eye on late-evening snack choices to keep tomorrow&apos;s
-                session feeling light.
-              </p>
-            </div>
-
-            <div className="space-y-2 text-[11px] text-slate-300">
-              <div className="flex items-center justify-between">
-                <span>Breakfast · Bagel &amp; eggs</span>
-                <span className="text-slate-400">520 kcal</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Lunch · Chicken rice bowl</span>
-                <span className="text-slate-400">690 kcal</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Snack · Yogurt &amp; berries</span>
-                <span className="text-slate-400">210 kcal</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* ---------- HOW IT WORKS ---------- */}
       <section
         id="how"
-        className="border-b border-white/5 bg-black py-16 md:py-20"
+        className="border-b border-white/5 bg-black min-h-screen flex items-center py-16 md:py-20"
       >
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
@@ -406,7 +334,7 @@ export default function Home() {
       {/* ---------- TRAINING PILLARS ---------- */}
       <section
         id="pillars"
-        className="border-b border-white/5 bg-[#050608] py-16 md:py-20"
+        className="border-b border-white/5 bg-[#050608] min-h-screen flex items-center py-16 md:py-20"
       >
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
@@ -460,7 +388,7 @@ export default function Home() {
       {/* ---------- JOURNAL / COACH ---------- */}
       <section
         id="journal"
-        className="border-b border-white/5 bg-black py-16 md:py-20"
+        className="border-b border-white/5 bg-black min-h-screen flex items-center py-16 md:py-20"
       >
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
@@ -485,9 +413,9 @@ export default function Home() {
               </p>
 
               <ul className="mt-5 space-y-2 text-sm text-slate-200">
-                <li>• Session-by-session journalling with tags.</li>
-                <li>• Weekly insights from training, nutrition and mood.</li>
-                <li>• Concrete suggestions, not generic motivation quotes.</li>
+                <li>• Session-by-session journalling</li>
+                <li>• Weekly insights from training + nutrition + mood</li>
+                <li>• Concrete suggestions, not generic motivation quotes</li>
               </ul>
             </div>
 
@@ -522,7 +450,7 @@ export default function Home() {
       {/* ---------- CTA ---------- */}
       <section
         id="cta"
-        className="border-t border-white/5 bg-[#050608] pb-20 pt-16"
+        className="border-t border-white/5 bg-[#050608] min-h-screen flex items-center pb-20 pt-16"
       >
         <div className="mx-auto max-w-4xl px-6 text-center">
           <motion.p
@@ -609,17 +537,6 @@ function Chip({ children }) {
     >
       {children}
     </span>
-  );
-}
-
-function MacroChip({ label, value }) {
-  return (
-    <div className="rounded-2xl border border-white/12 bg-black/70 px-3 py-2 text-[11px]">
-      <p className="text-[10px] uppercase tracking-[0.16em] text-slate-400">
-        {label}
-      </p>
-      <p className="mt-1 text-xs font-semibold text-slate-100">{value}</p>
-    </div>
   );
 }
 
