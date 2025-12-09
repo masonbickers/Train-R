@@ -77,6 +77,7 @@ export default function Home() {
   const year = new Date().getFullYear();
   const carouselRef = useRef(null);
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const scrollCarousel = (direction) => {
     if (!carouselRef.current) return;
@@ -86,18 +87,12 @@ export default function Home() {
 
     if (direction === "right") {
       const target = container.scrollLeft + scrollAmount;
-      if (target >= maxScroll - 5) {
-        container.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        container.scrollTo({ left: target, behavior: "smooth" });
-      }
+      const finalTarget = target >= maxScroll - 5 ? 0 : target;
+      container.scrollTo({ left: finalTarget, behavior: "smooth" });
     } else {
       const target = container.scrollLeft - scrollAmount;
-      if (target <= 0) {
-        container.scrollTo({ left: maxScroll, behavior: "smooth" });
-      } else {
-        container.scrollTo({ left: target, behavior: "smooth" });
-      }
+      const finalTarget = target <= 0 ? maxScroll : target;
+      container.scrollTo({ left: finalTarget, behavior: "smooth" });
     }
   };
 
@@ -129,8 +124,74 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
       {/* -------- HEADER -------- */}
-      <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg">
-        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-6 py-3">
+      <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg border-b border-white/5">
+        {/* MOBILE HEADER */}
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
+          <button
+            type="button"
+            className="text-white/80 text-xl"
+            onClick={() => setShowMobileMenu((prev) => !prev)}
+          >
+            ☰
+          </button>
+
+          <div className="flex flex-1 items-center justify-center">
+            <Image
+              src="/train-r-logo.png"
+              alt="Train-R logo"
+              width={110}
+              height={26}
+              className="h-7 w-auto"
+              priority
+            />
+          </div>
+
+          <button
+            className="text-[10px] tracking-[0.18em] uppercase text-white/70"
+            type="button"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+          >
+            ACCOUNT
+          </button>
+        </div>
+
+        {/* MOBILE SLIDE-DOWN MENU */}
+        {showMobileMenu && (
+          <div className="md:hidden bg-black/95 border-t border-white/10 px-6 py-4 space-y-3">
+            {NAV_LEFT.map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => {
+                  handleNavClick(item);
+                  setShowMobileMenu(false);
+                }}
+                className="block w-full text-left text-sm text-white/80 tracking-[0.22em] uppercase py-2"
+              >
+                {item}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+                setShowMobileMenu(false);
+              }}
+              className="block w-full text-left text-sm text-white/80 tracking-[0.22em] uppercase py-2"
+            >
+              Account
+            </button>
+          </div>
+        )}
+
+        {/* DESKTOP HEADER */}
+        <div className="mx-auto hidden max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-6 py-3 md:grid">
           {/* Left nav */}
           <nav className="flex items-center gap-8 text-xs tracking-[0.18em] uppercase justify-self-start">
             {NAV_LEFT.map((item) => (
@@ -182,7 +243,7 @@ export default function Home() {
       </header>
 
       {/* -------- HERO (no scroll animation so it stays perfectly centred) -------- */}
-      <section className="relative h-screen w-full">
+      <section className="relative min-h-screen w-full pt-20">
         <Image
           src="/running.jpeg"
           alt="Hybrid training in motion"
@@ -193,12 +254,12 @@ export default function Home() {
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
-          <p className="mb-4 text-xs tracking-[0.3em] uppercase text-white/70">
+        <div className="relative z-10 flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center px-6 text-center">
+          <p className="mb-4 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-white/70">
             Hybrid Training • Running • Strength • Hyrox
           </p>
 
-          <h1 className="max-w-3xl text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight">
+          <h1 className="max-w-3xl text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight">
             The app built for
             <span className="block md:inline"> real-world performance.</span>
           </h1>
@@ -502,14 +563,14 @@ export default function Home() {
                     or &ldquo;Chaos&rdquo; so the plan can respond instead of
                     assuming every week is textbook.
                   </p>
-                  <div className="flex gap-2 text-[11px]">
+                  <div className="flex flex-wrap gap-2 text-[11px]">
                     <span className="rounded-full bg-white/10 px-3 py-1">
                       Post-race pizza
                     </span>
                     <span className="rounded-full bg-white/10 px-3 py-1">
                       Long run bagels
                     </span>
-                    <span className="hidden sm:inline rounded-full bg-white/10 px-3 py-1">
+                    <span className="rounded-full bg-white/10 px-3 py-1">
                       Office snacks
                     </span>
                   </div>
@@ -808,7 +869,7 @@ export default function Home() {
       </section>
 
       {/* -------- FAQ (MINIMAL ACCORDION) -------- */}
-      <section className="bg-black py-20">
+      <section id="faq" className="bg-black py-20">
         <FadeInSection>
           <div className="mx-auto max-w-6xl px-6 grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
             {/* Left header */}
@@ -862,7 +923,7 @@ export default function Home() {
       <section id="gallery" className="bg-[#050505] py-16">
         <FadeInSection>
           <div className="relative mt-2">
-            {/* Arrows */}
+            {/* Arrows (desktop only) */}
             <button
               type="button"
               onClick={() => scrollCarousel("left")}
@@ -942,77 +1003,83 @@ export default function Home() {
               </form>
             </div>
 
-          {/* RIGHT SECTIONS */}
-<div className="flex flex-1 flex-col gap-10 sm:flex-row sm:justify-end sm:gap-16">
-  {/* SUPPORT */}
-  <div>
-    <p className="text-xs font-semibold tracking-[0.28em] uppercase text-white/60 mb-3">
-      Support
-    </p>
-    <ul className="space-y-1 text-sm text-white/70">
-      <li>
-        <a href="#contact-section" className="hover:text-white">
-          Contact
-        </a>
-      </li>
-      <li>
-        <a href="#faq" className="hover:text-white">
-          FAQ
-        </a>
-      </li>
-      <li>
-        <a href="mailto:hello@train-r.com" className="hover:text-white">
-          Email support
-        </a>
-      </li>
-      <li>
-        <a href="#about-section" className="hover:text-white">
-          About Train-R
-        </a>
-      </li>
-    </ul>
-  </div>
+            {/* RIGHT SECTIONS */}
+            <div className="flex flex-1 flex-col gap-10 sm:flex-row sm:justify-end sm:gap-16">
+              {/* SUPPORT */}
+              <div>
+                <p className="text-xs font-semibold tracking-[0.28em] uppercase text-white/60 mb-3">
+                  Support
+                </p>
+                <ul className="space-y-1 text-sm text-white/70">
+                  <li>
+                    <a href="#contact-section" className="hover:text-white">
+                      Contact
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#faq" className="hover:text-white">
+                      FAQ
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="mailto:hello@train-r.com"
+                      className="hover:text-white"
+                    >
+                      Email support
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#about-section" className="hover:text-white">
+                      About Train-R
+                    </a>
+                  </li>
+                </ul>
+              </div>
 
-  {/* LEGAL */}
-  <div className="sm:pl-10 sm:border-l sm:border-white/10">
-    <p className="text-xs font-semibold tracking-[0.28em] uppercase text-white/60 mb-3">
-      Legal
-    </p>
-    <ul className="space-y-1 text-sm text-white/70">
-      <li>
-        <a href="/privacy" className="hover:text-white">
-          Privacy policy
-        </a>
-      </li>
-      <li>
-        <a href="/terms" className="hover:text-white">
-          Terms of use
-        </a>
-      </li>
-      <li>
-        <a href="/cookies" className="hover:text-white">
-          Cookie policy
-        </a>
-      </li>
-      <li>
-        <a href="/data-security" className="hover:text-white">
-          Data & security
-        </a>
-      </li>
-    </ul>
-  </div>
-</div>
-
+              {/* LEGAL */}
+              <div className="sm:pl-10 sm:border-l sm:border-white/10">
+                <p className="text-xs font-semibold tracking-[0.28em] uppercase text-white/60 mb-3">
+                  Legal
+                </p>
+                <ul className="space-y-1 text-sm text-white/70">
+                  <li>
+                    <a href="/privacy" className="hover:text-white">
+                      Privacy policy
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/terms" className="hover:text-white">
+                      Terms of use
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/cookies" className="hover:text-white">
+                      Cookie policy
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/data-security" className="hover:text-white">
+                      Data & security
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </FadeInSection>
 
         {/* bottom strip */}
         <div className="border-t border-white/10">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 text-[7px] tracking-[0.16em] uppercase text-white/50">
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-3 text-[7px] sm:flex-row tracking-[0.16em] uppercase text-white/50">
             <p>Copyright © {year}, Train-R | All rights reserved</p>
             <div className="flex items-center gap-1">
-              <a href="#" className="hover:text-white" />
-              <a href="#" className="hover:text-white" />
+              <a href="#" className="hover:text-white">
+                {/* Social link placeholder */}
+              </a>
+              <a href="#" className="hover:text-white">
+                {/* Social link placeholder */}
+              </a>
             </div>
           </div>
         </div>
