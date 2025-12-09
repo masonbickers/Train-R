@@ -127,7 +127,7 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
       {/* -------- HEADER -------- */}
       <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg border-b border-white/5">
-    {/* MOBILE HEADER */}
+{/* MOBILE HEADER */}
 <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
   {/* Mobile menu toggle */}
   <button
@@ -151,7 +151,7 @@ export default function Home() {
     />
   </div>
 
-  {/* Account icon button */}
+  {/* Account icon — clean, no circle */}
   <button
     type="button"
     aria-label="Account"
@@ -160,9 +160,9 @@ export default function Home() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }}
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 text-white/80 hover:border-white hover:text-white transition"
+    className="text-white/80 hover:text-white transition p-1"
   >
-    <User className="h-4 w-4" />
+    <User className="h-5 w-5" />
   </button>
 </div>
 
