@@ -3,6 +3,8 @@
 
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
+import { User } from "lucide-react";
+
 
 const NAV_LEFT = ["Train", "Nutrition", "Journal"];
 const NAV_RIGHT = ["About", "Contact"]; // kept in case you want later
@@ -125,13 +127,14 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
       {/* -------- HEADER -------- */}
       <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg border-b border-white/5">
-     {/* MOBILE HEADER */}
+    {/* MOBILE HEADER */}
 <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
   {/* Mobile menu toggle */}
   <button
     type="button"
     className="text-white/80 text-2xl"
     onClick={() => setShowMobileMenu((prev) => !prev)}
+    aria-label="Toggle navigation"
   >
     ☰
   </button>
@@ -148,7 +151,7 @@ export default function Home() {
     />
   </div>
 
-  {/* Account icon */}
+  {/* Account icon button */}
   <button
     type="button"
     aria-label="Account"
@@ -157,9 +160,9 @@ export default function Home() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }}
-    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 text-white/80"
+    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 text-white/80 hover:border-white hover:text-white transition"
   >
-    <span className="text-sm">👤</span>
+    <User className="h-4 w-4" />
   </button>
 </div>
 
