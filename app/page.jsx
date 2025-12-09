@@ -125,39 +125,44 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
       {/* -------- HEADER -------- */}
       <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg border-b border-white/5">
-        {/* MOBILE HEADER */}
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
-          <button
-            type="button"
-            className="text-white/80 text-xl"
-            onClick={() => setShowMobileMenu((prev) => !prev)}
-          >
-            ☰
-          </button>
+     {/* MOBILE HEADER */}
+<div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
+  {/* Mobile menu toggle */}
+  <button
+    type="button"
+    className="text-white/80 text-2xl"
+    onClick={() => setShowMobileMenu((prev) => !prev)}
+  >
+    ☰
+  </button>
 
-          <div className="flex flex-1 items-center justify-center">
-            <Image
-              src="/train-r-logo.png"
-              alt="Train-R logo"
-              width={110}
-              height={26}
-              className="h-7 w-auto"
-              priority
-            />
-          </div>
+  {/* Logo */}
+  <div className="flex flex-1 items-center justify-center">
+    <Image
+      src="/train-r-logo.png"
+      alt="Train-R logo"
+      width={110}
+      height={26}
+      className="h-7 w-auto"
+      priority
+    />
+  </div>
 
-          <button
-            className="text-[10px] tracking-[0.18em] uppercase text-white/70"
-            type="button"
-            onClick={() => {
-              if (typeof window !== "undefined") {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }
-            }}
-          >
-            ACCOUNT
-          </button>
-        </div>
+  {/* Account icon */}
+  <button
+    type="button"
+    aria-label="Account"
+    onClick={() => {
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }}
+    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 text-white/80"
+  >
+    <span className="text-sm">👤</span>
+  </button>
+</div>
+
 
         {/* MOBILE SLIDE-DOWN MENU */}
         {showMobileMenu && (
