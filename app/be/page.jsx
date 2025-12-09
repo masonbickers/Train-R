@@ -1,0 +1,826 @@
+// app/page.jsx
+"use client";
+
+import Image from "next/image";
+import { useRef, useState } from "react";
+
+const NAV_LEFT = ["Train", "Nutrition", "Journal"];
+const NAV_RIGHT = ["About", "Contact"]; // kept in case you want later
+
+// PHOTO CAROUSEL IMAGES — update filenames as needed
+const GALLERY_IMAGES = [
+  {
+    src: "/running.jpeg",
+    label: "Run session view",
+  },
+  {
+    src: "/barbell.jpeg",
+    label: "Hyrox breakdown",
+  },
+  {
+    src: "/athlete.jpeg",
+    label: "test",
+  },
+  {
+    src: "/crossfit.jpeg",
+    label: "Strength session",
+  },
+  {
+    src: "/rope.jpeg",
+    label: "Strength session",
+  },
+  {
+    src: "/gym.jpeg",
+    label: "Strength session",
+  },
+  {
+    src: "/running.jpeg",
+    label: "Strength session",
+  },
+];
+
+const FAQ_ITEMS = [
+  {
+    q: "Is Train-R for beginners or experienced athletes?",
+    a: "Both. The app scales your volume and intensity based on your current level, race dates and weekly capacity. You’ll never be thrown into elite-level volume if you’re not ready for it.",
+  },
+  {
+    q: "Do I need a gym membership or specific equipment?",
+    a: "You’ll get the most out of Train-R with access to basic strength kit (barbells, dumbbells, sled, rower, ski, etc.), but we can still build smart plans around what you actually have.",
+  },
+  {
+    q: "How is this different from a generic running plan?",
+    a: "Traditional plans assume you only run. Train-R balances running, lifting and Hyrox-style conditioning into a single, adaptive plan that reacts when life gets in the way.",
+  },
+  {
+    q: "Can I change my goals once I’ve started?",
+    a: "Yes. You can update goals, races and availability, and the plan will adjust your upcoming weeks instead of starting from zero.",
+  },
+];
+
+export default function Home() {
+  const year = new Date().getFullYear();
+  const carouselRef = useRef(null);
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  const scrollCarousel = (direction) => {
+    if (!carouselRef.current) return;
+    const container = carouselRef.current;
+    const scrollAmount = container.clientWidth * 0.8;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    if (direction === "right") {
+      const target = container.scrollLeft + scrollAmount;
+      if (target >= maxScroll - 5) {
+        container.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        container.scrollTo({ left: target, behavior: "smooth" });
+      }
+    } else {
+      const target = container.scrollLeft - scrollAmount;
+      if (target <= 0) {
+        container.scrollTo({ left: maxScroll, behavior: "smooth" });
+      } else {
+        container.scrollTo({ left: target, behavior: "smooth" });
+      }
+    }
+  };
+
+  const toggleFaq = (index) => {
+    setOpenFaqIndex((prev) => (prev === index ? null : index));
+  };
+
+  // ---- HEADER NAV HANDLER ----
+  const handleNavClick = (label) => {
+    const idMap = {
+      Train: "train-section",
+      Nutrition: "nutrition-section",
+      Journal: "journal-section",
+      About: "about-section",
+      Contact: "contact-section",
+    };
+
+    const targetId = idMap[label];
+    if (!targetId) return;
+
+    if (typeof document !== "undefined") {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-black text-white">
+      {/* -------- HEADER -------- */}
+      <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg">
+        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-6 py-3">
+          {/* Left nav */}
+          <nav className="flex items-center gap-8 text-xs tracking-[0.18em] uppercase justify-self-start">
+            {NAV_LEFT.map((item) => (
+              <button
+                key={item}
+                className="text-white/70 hover:text-white transition-colors"
+                type="button"
+                onClick={() => handleNavClick(item)}
+              >
+                {item.toUpperCase()}
+              </button>
+            ))}
+          </nav>
+
+          {/* Logo centre */}
+          <div className="flex items-center justify-center">
+            <Image
+              src="/train-r-logo.png"
+              alt="Train-R logo"
+              width={110}
+              height={26}
+              className="h-7 w-auto"
+              priority
+            />
+          </div>
+
+          {/* Right: account + location selector */}
+          <nav className="flex items-center gap-8 text-xs tracking-[0.18em] uppercase justify-self-end">
+            <button
+              className="text-white/70 hover:text-white transition-colors"
+              type="button"
+              // later you can swap this for router.push("/account")
+              onClick={() => {
+                // placeholder – currently just scrolls to top
+                if (typeof window !== "undefined") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+            >
+              ACCOUNT
+            </button>
+            <button
+              className="flex items-center gap-1 text-white/70 hover:text-white transition-colors"
+              type="button"
+            >
+              <span>UNITED KINGDOM</span>
+              <span className="text-[10px] leading-none">▾</span>
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      {/* -------- HERO -------- */}
+      <section className="relative h-screen w-full">
+        <Image
+          src="/running.jpeg"
+          alt="Hybrid training in motion"
+          fill
+          priority
+          className="object-cover filter grayscale"
+        />
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
+
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+          <p className="mb-4 text-xs tracking-[0.3em] uppercase text-white/70">
+            Hybrid Training • Running • Strength • Hyrox
+          </p>
+
+          <h1 className="max-w-3xl text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight">
+            The app built for
+            <span className="block md:inline"> real-world performance.</span>
+          </h1>
+
+          <p className="mt-4 max-w-xl text-sm md:text-base text-white/70">
+            Personalised running, strength and Hyrox plans. One place to track
+            the work that actually makes you better.
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <button className="rounded-full border border-white bg-white text-black px-8 py-2 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-transparent hover:text-white transition-colors">
+              Get early access
+            </button>
+            <button className="rounded-full border border-white/40 px-8 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/80 hover:border-white hover:text-white transition-colors">
+              View demo
+            </button>
+          </div>
+
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] uppercase text-white/50">
+            Scroll
+          </div>
+        </div>
+      </section>
+
+      {/* -------- HOW IT WORKS (TWO-COLUMN) -------- */}
+      <section id="train-section" className="bg-black py-20">
+        <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm">
+            <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-3">
+              How it works
+            </p>
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
+              Built for the way you actually train.
+            </h2>
+            <p className="mt-4 text-sm text-white/60">
+              Train-R pulls your running, strength and Hyrox work into one
+              place, then adapts the plan around real life — not the other way
+              round.
+            </p>
+          </div>
+
+          <div className="grid flex-1 gap-6 sm:grid-cols-2">
+            {[
+              {
+                step: "Step 01",
+                title: "Tell us how you train.",
+                body: "Goals, race dates, weak points and current volume — all in one quick setup flow.",
+              },
+              {
+                step: "Step 02",
+                title: "Get a live training blueprint.",
+                body: "AI-built sessions mapped across your week: runs, lifts, Hyrox pieces and recovery.",
+              },
+              {
+                step: "Step 03",
+                title: "Adjust around real life.",
+                body: "Miss a day, travel, or race? Your plan reshuffles so the important work still gets done.",
+              },
+              {
+                step: "Step 04",
+                title: "See the full picture.",
+                body: "Track load, pace trends and Hyrox splits in one view so you know what's working.",
+              },
+            ].map((card) => (
+              <div
+                key={card.step}
+                className="border border-white/10 bg-white/[0.02] px-5 py-6 rounded-xl"
+              >
+                <p className="text-[11px] tracking-[0.28em] uppercase text-white/50 mb-2">
+                  {card.step}
+                </p>
+                <h3 className="text-sm font-semibold mb-2">{card.title}</h3>
+                <p className="text-xs text-white/60">{card.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------- PILLARS: TRACK / STRENGTH / NUTRITION -------- */}
+      <section id="pillars-section" className="bg-[#050505] py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-3">
+            What you train
+          </p>
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
+            Three pillars, one place.
+          </h2>
+
+          <div className="mt-10 grid gap-8 md:grid-cols-3">
+            {/* Track / Running */}
+            <div className="bg-black/60 px-6 py-8 rounded-2xl flex flex-col items-center text-center">
+              <div className="relative mb-5 h-20 w-20">
+                <Image
+                  src="/white-track-2.png"
+                  alt="Track / running"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <h3 className="text-sm font-semibold mb-2 tracking-[0.18em] uppercase">
+                Track & Road
+              </h3>
+              <p className="text-xs text-white/60 max-w-xs">
+                Sessions for 5k to marathon, intervals and tempo work – all
+                balanced against lifts and Hyrox pieces.
+              </p>
+            </div>
+
+            {/* Strength */}
+            <div className="bg-black/60 px-6 py-8 rounded-2xl flex flex-col items-center text-center">
+              <div className="relative mb-5 h-20 w-20">
+                <Image
+                  src="/dumbell.png"
+                  alt="Strength"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <h3 className="text-sm font-semibold mb-2 tracking-[0.18em] uppercase">
+                Strength
+              </h3>
+              <p className="text-xs text-white/60 max-w-xs">
+                Structured lifting that supports performance – not just
+                aesthetics – with leg strength, upper power and engine days.
+              </p>
+            </div>
+
+            {/* Nutrition (pillar icon) */}
+            <div className="bg-black/60 px-6 py-8 rounded-2xl flex flex-col items-center text-center">
+              <div className="relative mb-5 h-20 w-20">
+                <Image
+                  src="/nutrition.png"
+                  alt="Nutrition"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <h3 className="text-sm font-semibold mb-2 tracking-[0.18em] uppercase">
+                Nutrition
+              </h3>
+              <p className="text-xs text-white/60 max-w-xs">
+                Log meals, track weight trends and tag hard days so fuelling and
+                recovery actually line up with the work.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------- NUTRITION SECTION (DETAILED) -------- */}
+      <section
+        id="nutrition-section"
+        className="bg-black py-20 border-y border-white/5"
+      >
+        <div className="mx-auto max-w-6xl px-6 grid gap-10 md:grid-cols-2 md:items-start">
+          {/* Left: Copy */}
+          <div>
+            <div className="mb-3 flex items-center gap-3">
+              <p className="text-xs tracking-[0.3em] uppercase text-white/60">
+                Nutrition engine
+              </p>
+              {/* subtle neon pill */}
+              <span
+                className="hidden rounded-full px-3 py-1 text-[10px] font-semibold tracking-[0.2em] uppercase md:inline-flex"
+                style={{ backgroundColor: "#E6FF3B", color: "#050505" }}
+              >
+                Fuel • Recover
+              </span>
+            </div>
+
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4">
+              Fuel that matches the work you&rsquo;re doing.
+            </h2>
+            <p className="text-sm text-white/60 mb-4">
+              Train-R doesn&rsquo;t just throw calorie targets at you. It ties
+              what you eat to the sessions you&rsquo;re actually doing – heavy
+              strength days, brutal Hyrox pieces, long runs and deload weeks.
+            </p>
+            <ul className="space-y-3 text-sm text-white/65">
+              <li>• Simple meal logging without turning your day into MyFitnessPal.</li>
+              <li>• Weight trends mapped against training load and recovery.</li>
+              <li>• Tag hard sessions so the app nudges carbs where they matter most.</li>
+              <li>• Race-week fuelling that plugs straight into your plan.</li>
+            </ul>
+          </div>
+
+          {/* Right: UI-style cards */}
+          <div className="grid gap-4">
+            <div className="rounded-2xl bg-white/[0.03] p-5 border border-white/10">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs tracking-[0.26em] uppercase text-white/50">
+                  Today&rsquo;s snapshot
+                </p>
+                <span
+                  className="h-1.5 w-16 rounded-full"
+                  style={{ backgroundColor: "#E6FF3B" }}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <div className="rounded-xl bg-black/70 p-3">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/50 mb-1">
+                    Calories
+                  </p>
+                  <p className="text-sm font-semibold">2,450</p>
+                  <p className="text-[11px] text-white/50 mt-1">
+                    On target for a strength + intervals day.
+                  </p>
+                </div>
+                <div className="rounded-xl bg-black/70 p-3">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/50 mb-1">
+                    Carbs
+                  </p>
+                  <p className="text-sm font-semibold">305g</p>
+                  <p className="text-[11px] text-white/50 mt-1">
+                    Front-loaded around key sessions.
+                  </p>
+                </div>
+                <div className="rounded-xl bg-black/70 p-3">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/50 mb-1">
+                    Protein
+                  </p>
+                  <p className="text-sm font-semibold">165g</p>
+                  <p className="text-[11px] text-white/50 mt-1">
+                    Split across 3–4 anchor meals.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-white/[0.02] p-5 border border-white/5">
+              <p className="text-xs tracking-[0.26em] uppercase text-white/50 mb-2">
+                Log the real world
+              </p>
+              <p className="text-sm text-white/70 mb-3">
+                Tag days as &ldquo;Perfect&rdquo;, &ldquo;Good enough&rdquo; or
+                &ldquo;Chaos&rdquo; so the plan can respond instead of assuming
+                every week is textbook.
+              </p>
+              <div className="flex gap-2 text-[11px]">
+                <span className="rounded-full bg-white/10 px-3 py-1">
+                  Post-race pizza
+                </span>
+                <span className="rounded-full bg-white/10 px-3 py-1">
+                  Long run bagels
+                </span>
+                <span className="hidden sm:inline rounded-full bg-white/10 px-3 py-1">
+                  Office snacks
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------- APP PREVIEW (PHONE MOCKUP) -------- */}
+      <section className="bg-black py-20">
+        <div className="mx-auto max-w-6xl px-6 text-center">
+          <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-3">
+            App preview
+          </p>
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4">
+            See your training in motion.
+          </h2>
+          <p className="mx-auto max-w-xl text-sm text-white/60 mb-10">
+            From today’s run and lifts to nutrition and long-term progress,
+            Train-R keeps everything connected in one clean, fast view.
+          </p>
+
+          <div className="relative mx-auto max-w-5xl">
+            <div className="pointer-events-none absolute inset-0 -z-10 opacity-60 blur-3xl" />
+            <div className="relative w-full">
+              <Image
+                src="/phone-mockup.png"
+                alt="Train-R app preview"
+                width={1200}
+                height={800}
+                className="mx-auto h-auto w-full max-w-4xl object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------- WHY TRAIN-R WORKS -------- */}
+      <section id="about-section" className="bg-[#050505] py-20">
+        <div className="mx-auto max-w-6xl px-6 grid gap-10 md:grid-cols-2 md:items-start">
+          <div>
+            <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-3">
+              Why Train-R works
+            </p>
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4">
+              Built around how hybrid athletes actually train.
+            </h2>
+            <p className="text-sm text-white/60">
+              Train-R isn’t a generic running plan or a random WOD generator.
+              It understands that you’re juggling running volume, strength work,
+              Hyrox stations, life stress and recovery – then balances the load
+              across the week.
+            </p>
+          </div>
+
+          <div className="grid gap-4 text-sm text-white/70">
+            <div className="bg-black/60 px-5 py-4 rounded-xl">
+              <h3 className="text-sm font-semibold mb-1">
+                Intelligent load management
+              </h3>
+              <p className="text-xs text-white/60">
+                Volume and intensity scale based on your recent sessions and
+                race dates so you progress without burning out.
+              </p>
+            </div>
+            <div className="bg-black/60 px-5 py-4 rounded-xl">
+              <h3 className="text-sm font-semibold mb-1">
+                One plan, not three separate ones
+              </h3>
+              <p className="text-xs text-white/60">
+                Runs, lifts and Hyrox sessions are programmed together – not in
+                isolation – so every session has a clear purpose.
+              </p>
+            </div>
+            <div className="bg-black/60 px-5 py-4 rounded-xl">
+              <h3 className="text-sm font-semibold mb-1">
+                Feedback loops from your data
+              </h3>
+              <p className="text-xs text-white/60">
+                Your performances, notes and fatigue scores feed back into the
+                plan so it keeps getting sharper over time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------- WHO IT'S FOR -------- */}
+      <section id="journal-section" className="bg-black py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-3">
+            Who it’s for
+          </p>
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-8">
+            If you live between running and strength, this is for you.
+          </h2>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="bg-white/[0.03] px-6 py-7 rounded-2xl">
+              <h3 className="text-sm font-semibold mb-2">Hybrid athletes</h3>
+              <p className="text-xs text-white/60">
+                You split your week between miles, the gym and brutal
+                conditioning. Train-R keeps it all pulling in the same
+                direction.
+              </p>
+            </div>
+
+            <div className="bg-white/[0.03] px-6 py-7 rounded-2xl">
+              <h3 className="text-sm font-semibold mb-2">
+                Hyrox & event racers
+              </h3>
+              <p className="text-xs text-white/60">
+                You’ve got events on the calendar and specific weaknesses
+                (sleds, burpees, running off the rower) that need targeted work.
+              </p>
+            </div>
+
+            <div className="bg-white/[0.03] px-6 py-7 rounded-2xl">
+              <h3 className="text-sm font-semibold mb-2">
+                Runners who lift
+              </h3>
+              <p className="text-xs text-white/60">
+                You care about PBs and staying strong. The app balances
+                strength, speed and durability so you can do both properly.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------- PRICING / EARLY ACCESS -------- */}
+      <section className="bg-[#050505] py-20">
+        <div className="mx-auto max-w-6xl px-6 text-center">
+          <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-3">
+            Pricing / early access
+          </p>
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4">
+            Secure your spot before full launch.
+          </h2>
+          <p className="mx-auto max-w-xl text-sm text-white/60 mb-10">
+            We’re rolling out Train-R to a limited group of athletes so we can
+            refine the engine with real-world training data.
+          </p>
+
+          <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-2">
+            <div className="bg-white/[0.05] px-6 py-8 text-left rounded-2xl">
+              <p className="text-xs tracking-[0.28em] uppercase text-white/60 mb-2">
+                Early access
+              </p>
+              <h3 className="text-xl font-semibold mb-2">Founding Athlete</h3>
+              <p className="text-sm text-white/70 mb-4">
+                Join the first wave of Train-R users, help shape the product and
+                lock in discounted pricing when we launch.
+              </p>
+              <ul className="mb-6 space-y-2 text-xs text-white/60">
+                <li>• Full access to training plans and app features</li>
+                <li>• Direct feedback channel for feature ideas</li>
+                <li>• Priority support and onboarding</li>
+              </ul>
+              <button className="w-full rounded-full border border-white bg-white text-black px-6 py-2 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-transparent hover:text-white transition-colors">
+                Join the waitlist
+              </button>
+            </div>
+
+            <div className="bg-white/[0.02] px-6 py-8 text-left rounded-2xl opacity-75">
+              <p className="text-xs tracking-[0.28em] uppercase text-white/60 mb-2">
+                Coming soon
+              </p>
+              <h3 className="text-xl font-semibold mb-2">Train-R Pro</h3>
+              <p className="text-sm text-white/70 mb-4">
+                Full public launch with advanced analytics, integrations and
+                more tools for serious athletes.
+              </p>
+              <ul className="space-y-2 text-xs text-white/60">
+                <li>• Deeper performance insights and trends</li>
+                <li>• More integrations and auto-sync options</li>
+                <li>• Advanced plan controls and race tools</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------- FAQ (MINIMAL ACCORDION) -------- */}
+      <section className="bg-black py-20">
+        <div className="mx-auto max-w-6xl px-6 grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
+          {/* Left header */}
+          <div>
+            <p className="text-xs tracking-[0.3em] uppercase text-white/60 mb-3">
+              FAQ
+            </p>
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4">
+              Questions, answered.
+            </h2>
+            <p className="text-sm text-white/60">
+              The basics, the details and how Train-R fits into your current
+              training. Tap a question on the right to open it.
+            </p>
+          </div>
+
+          {/* Right accordion */}
+          <div className="space-y-1">
+            {FAQ_ITEMS.map((item, index) => {
+              const isOpen = openFaqIndex === index;
+              return (
+                <div
+                  key={item.q}
+                  className="border-b border-white/10 last:border-b-0"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(index)}
+                    className="flex w-full items-center justify-between gap-4 py-3 text-left"
+                  >
+                    <span className="text-sm text-white/85">
+                      {item.q}
+                    </span>
+                    <span className="text-xs text-white/50">
+                      {isOpen ? "–" : "+"}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="pb-4 pr-8 text-xs text-white/60">
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* -------- PHOTO CAROUSEL (EDGE-TO-EDGE) -------- */}
+      <section id="gallery" className="bg-[#050505] py-16">
+        <div className="relative mt-2">
+          {/* Arrows */}
+          <button
+            type="button"
+            onClick={() => scrollCarousel("left")}
+            className="absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 rounded-full border border-white/40 bg-black/70 px-3 py-2 text-sm font-semibold tracking-[0.2em] uppercase text-white/80 hover:bg-black/90 md:inline-flex"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollCarousel("right")}
+            className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 rounded-full border border-white/40 bg-black/70 px-3 py-2 text-sm font-semibold tracking-[0.2em] uppercase text-white/80 hover:bg-black/90 md:inline-flex"
+          >
+            ›
+          </button>
+
+          {/* Edge-to-edge strip, no full-width borders */}
+          <div
+            ref={carouselRef}
+            className="flex gap-[2px] overflow-x-auto scroll-smooth bg-black/90 px-0 py-2 sm:py-3 md:py-4 -mx-0 sm:-mx-4 md:-mx-8
+                       [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {GALLERY_IMAGES.map((img, index) => (
+              <div
+                key={`${img.src}-${img.label}-${index}`}
+                className="relative aspect-[4/3] w-40 flex-shrink-0 overflow-hidden sm:w-56 md:w-72 lg:w-80"
+              >
+                <Image
+                  src={img.src}
+                  alt={img.label}
+                  fill
+                  className="object-cover filter grayscale"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------- FOOTER -------- */}
+      <footer id="contact-section" className="bg-black">
+        <div className="mx-auto max-w-6xl px-6 py-14 flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          {/* LEFT: Logo + Email signup (stays left, does NOT push right columns) */}
+          <div className="w-full md:w-auto max-w-sm">
+            <div className="flex items-center mb-6">
+              <Image
+                src="/train-r-logo.png"
+                alt="Train-R logo"
+                width={110}
+                height={26}
+                className="h-7 w-auto"
+              />
+            </div>
+
+            <p className="text-sm text-white/70 mb-4">
+              Sign up to get early access.
+            </p>
+
+            {/* Email signup form */}
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="flex items-center gap-2"
+            >
+              <input
+                type="email"
+                placeholder="Your email"
+                className="flex-1 rounded-full bg-white/5 px-4 py-2 text-sm text-white placeholder-white/40 border border-white/10 focus:border-white/30 focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="rounded-full bg-white text-black px-5 py-2 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-white/80 transition"
+              >
+                Join
+              </button>
+            </form>
+          </div>
+
+          {/* RIGHT SECTIONS (unchanged, fixed in place) */}
+          <div className="flex flex-1 flex-col gap-8 sm:flex-row sm:justify-end">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.28em] uppercase text-white/60 mb-3">
+                Help
+              </p>
+              <ul className="space-y-1 text-sm text-white/70">
+                <li>
+                  <a href="#contact-section" className="hover:text-white">
+                    Contact
+                  </a>
+                </li>
+                <li>
+                  <a href="#about-section" className="hover:text-white">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a href="#terms" className="hover:text-white">
+                    Terms
+                  </a>
+                </li>
+                <li>
+                  <a href="#shipping" className="hover:text-white">
+                    Shipping / Refund Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#returns" className="hover:text-white">
+                    Returns
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold tracking-[0.28em] uppercase text-white/60 mb-3">
+                Info
+              </p>
+              <ul className="space-y-1 text-sm text-white/70">
+                <li>
+                  <a href="#reviews" className="hover:text-white">
+                    Reviews
+                  </a>
+                </li>
+                <li>
+                  <a href="#careers" className="hover:text-white">
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a href="#roadmap" className="hover:text-white">
+                    Product roadmap
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* bottom strip */}
+        <div className="border-t border-white/10">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 text-[11px] tracking-[0.16em] uppercase text-white/50">
+            <p>Copyright © {year}, Train-R | All rights reserved</p>
+            <div className="flex items-center gap-4">
+              <a href="#" className="hover:text-white">
+                IG
+              </a>
+              <a href="#" className="hover:text-white">
+                TT
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
