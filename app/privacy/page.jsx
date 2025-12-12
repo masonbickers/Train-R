@@ -1,12 +1,135 @@
 "use client";
 
+import Image from "next/image";
+import { useState } from "react";
+import { User } from "lucide-react";
+
+/* ───────── VISUAL TOKENS ───────── */
 const ACCENT = "#E6FF3B";
 const SILVER = "#E1E3E8";
 
 export default function PrivacyPage() {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  // Footer signup state
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupStatus, setSignupStatus] = useState(null);
+  const [signupError, setSignupError] = useState("");
+
+  const year = new Date().getFullYear();
+
+  /* Scroll helper */
+  const handleNavClick = (item) => {
+    if (item === "Contact") {
+      const el = document.getElementById("contact-section");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* Footer signup handler */
+  const handleSignupSubmit = (e) => {
+    e.preventDefault();
+    setSignupError("");
+    setSignupStatus(null);
+
+    if (!signupEmail.trim()) {
+      setSignupError("Please enter your email.");
+      return;
+    }
+    setSignupStatus("success");
+    setSignupEmail("");
+  };
+
   return (
     <main className="min-h-screen bg-black text-slate-100">
-      <div className="mx-auto max-w-4xl px-6 py-16 md:py-20">
+      {/* ───────── HEADER ───────── */}
+      <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg border-b border-white/5">
+        {/* MOBILE HEADER */}
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
+          <button
+            type="button"
+            className="text-white/80 text-2xl"
+            onClick={() => setShowMobileMenu((prev) => !prev)}
+          >
+            ☰
+          </button>
+
+          <div className="flex flex-1 items-center justify-center">
+            <Image
+              src="/train-r-logo.png"
+              alt="Train-R logo"
+              width={110}
+              height={26}
+              className="h-7 w-auto"
+              priority
+            />
+          </div>
+
+          <button
+            type="button"
+            aria-label="Account"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="text-white/80 hover:text-white transition p-1"
+          >
+            <User className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* MOBILE MENU */}
+        {showMobileMenu && (
+          <div className="md:hidden bg-black/95 border-t border-white/10 px-6 py-4 space-y-3">
+            <button
+              type="button"
+              onClick={() => {
+                handleNavClick("Contact");
+                setShowMobileMenu(false);
+              }}
+              className="block text-left text-sm text-white/80 tracking-[0.22em] uppercase py-2"
+            >
+              Contact
+            </button>
+          </div>
+        )}
+
+        {/* DESKTOP HEADER */}
+        <div className="mx-auto hidden max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-6 py-3 md:grid">
+          <nav className="flex items-center gap-8 text-xs uppercase tracking-[0.18em]">
+            <button
+              type="button"
+              onClick={() => handleNavClick("Contact")}
+              className="text-white/70 hover:text-white transition-colors"
+            >
+              CONTACT
+            </button>
+          </nav>
+
+          <div className="flex items-center justify-center">
+            <Image
+              src="/train-r-logo.png"
+              alt="Train-R logo"
+              width={110}
+              height={26}
+              className="h-7 w-auto"
+              priority
+            />
+          </div>
+
+          <nav className="flex items-center gap-8 text-xs tracking-[0.18em] uppercase justify-self-end">
+            <button
+              className="text-white/70 hover:text-white transition-colors"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              ACCOUNT
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      {/* ───────── CONTENT WRAPPER ───────── */}
+      <div className="mx-auto max-w-4xl px-6 py-32 md:py-36">
+
         {/* Header */}
         <header className="mb-10 border-b border-slate-800 pb-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500">
@@ -20,7 +143,7 @@ export default function PrivacyPage() {
           </p>
         </header>
 
-        {/* Intro */}
+        {/* INTRO */}
         <section className="space-y-4 text-sm leading-relaxed text-slate-200">
           <p>
             This Privacy Policy explains how <strong>Train-R</strong> (“we”,
@@ -34,29 +157,21 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        {/* Section 1 */}
+        {/* SECTION 1 */}
         <Section title="1. Who we are">
+          <p><strong>Controller:</strong> Mason Bickers</p>
+          <p><strong>Service name:</strong> Train-R</p>
           <p>
-            <span className="font-semibold">Controller:</span> Mason Bickers
-          </p>
-          <p>
-            <span className="font-semibold">Service name:</span> Train-R
-          </p>
-          <p>
-            <span className="font-semibold">Website:</span>{" "}
-            <a
-              href="https://www.train-r.com"
-              className="underline decoration-slate-500 underline-offset-4 hover:text-white"
-            >
+            <strong>Website:</strong>{" "}
+            <a href="https://www.train-r.com"
+               className="underline decoration-slate-500 underline-offset-4 hover:text-white">
               https://www.train-r.com
             </a>
           </p>
           <p>
-            <span className="font-semibold">Email:</span>{" "}
-            <a
-              href="mailto:info@train-r.com"
-              className="underline decoration-slate-500 underline-offset-4 hover:text-white"
-            >
+            <strong>Email:</strong>{" "}
+            <a href="mailto:info@train-r.com"
+               className="underline decoration-slate-500 underline-offset-4 hover:text-white">
               info@train-r.com
             </a>
           </p>
@@ -66,7 +181,7 @@ export default function PrivacyPage() {
           </p>
         </Section>
 
-        {/* Section 2 */}
+        {/* SECTION 2 */}
         <Section title="2. Data we collect">
           <p className="mb-2">
             When you connect your Garmin account to Train-R, we receive data via
@@ -76,270 +191,170 @@ export default function PrivacyPage() {
           <Subheading>Identity &amp; account data</Subheading>
           <ul className="list-disc space-y-1 pl-5">
             <li>Garmin user ID</li>
-            <li>Display name (if shared)</li>
-            <li>Email address (if provided)</li>
+            <li>Display name</li>
+            <li>Email address (if shared)</li>
           </ul>
 
           <Subheading className="mt-4">Activity &amp; fitness data</Subheading>
           <ul className="list-disc space-y-1 pl-5">
-            <li>Activity type (e.g. run, strength, Hyrox)</li>
+            <li>Activity type</li>
             <li>Distance, duration, pace, cadence</li>
             <li>Heart-rate data</li>
-            <li>GPS route data associated with activities</li>
-            <li>Calories, elevation, steps and other metrics</li>
-            <li>Training load and intensity metrics</li>
+            <li>GPS route data</li>
+            <li>Calories, elevation, steps</li>
+            <li>Training load & intensity</li>
           </ul>
 
-          <Subheading className="mt-4">Device and technical data</Subheading>
+          <Subheading className="mt-4">Device & technical data</Subheading>
           <ul className="list-disc space-y-1 pl-5">
             <li>Device type / model</li>
-            <li>Metadata such as sync times and basic logs</li>
+            <li>Sync times and logs</li>
           </ul>
 
-          <p className="mt-4">
+          <p className="mt-2">
             We <strong>do not</strong> receive your Garmin password or payment
             details.
           </p>
 
           <p className="mt-2">
-            We may also collect usage analytics from your interaction with
-            Train-R (for example, which screens you use most), as well as any
-            information you enter manually, such as notes, training goals, and
-            session logs.
+            We may also collect usage analytics, notes, training goals, and any
+            information you enter manually.
           </p>
         </Section>
 
-        {/* Section 3 */}
+        {/* SECTION 3 */}
         <Section title="3. How we use your data">
           <p className="mb-2">
-            We use your Garmin and account data to operate and improve the
-            Train-R service, including to:
+            We use your Garmin and account data to operate and improve Train-R:
           </p>
           <ul className="list-disc space-y-1 pl-5">
-            <li>Provide and operate the Train-R app and related services</li>
-            <li>Sync, display and organise your activity history</li>
-            <li>
-              Generate training insights, metrics, and recommendations
-              personalised to you
-            </li>
-            <li>Analyse performance trends over time</li>
-            <li>Personalise your training blocks and plan structure</li>
-            <li>Provide customer support and respond to enquiries</li>
-            <li>
-              Maintain the security, integrity and performance of our systems
-            </li>
-            <li>
-              Comply with Garmin API requirements and other applicable terms
-            </li>
+            <li>Operate and provide the Train-R service</li>
+            <li>Display and sync your training history</li>
+            <li>Generate personalised insights and recommendations</li>
+            <li>Analyse performance trends</li>
+            <li>Personalise training plans</li>
+            <li>Provide customer support</li>
+            <li>Maintain system security</li>
+            <li>Comply with Garmin API terms</li>
           </ul>
+
           <p className="mt-3">
-            We may use aggregated and anonymised data (which does not identify
-            you) to analyse usage patterns, improve our services, and for
-            research and statistical purposes.
-          </p>
-          <p className="mt-3">
-            We <strong>do not sell</strong> your personal data.
+            We may use anonymised data for analytics and research.
+            We <strong>do not sell</strong> your data.
           </p>
         </Section>
 
-        {/* Section 4 */}
+        {/* SECTION 4 */}
         <Section title="4. Legal bases for processing (UK / EU)">
-          <p className="mb-2">
-            If you are in the UK or EU, we rely on the following legal bases
-            under UK GDPR / EU GDPR:
-          </p>
           <ul className="list-disc space-y-1 pl-5">
+            <li><strong>Contract:</strong> providing the Train-R service</li>
             <li>
-              <span className="font-semibold">Performance of a contract</span>{" "}
-              – where processing is necessary to provide the Train-R service you
-              have requested.
+              <strong>Consent:</strong> Garmin integration (you can withdraw any time)
             </li>
             <li>
-              <span className="font-semibold">Consent</span> – for example, when
-              you connect your Garmin account and grant Train-R access to your
-              Garmin data. You can withdraw this consent at any time by
-              disconnecting Train-R from Garmin.
-            </li>
-            <li>
-              <span className="font-semibold">Legitimate interests</span> – such
-              as improving the service, enhancing user experience, and ensuring
-              security, provided these interests are not overridden by your
-              rights.
+              <strong>Legitimate interests:</strong> improving service & security
             </li>
           </ul>
         </Section>
 
-        {/* Section 5 */}
+        {/* SECTION 5 */}
         <Section title="5. How we share your data">
-          <p className="mb-2">
-            We may share your data with carefully selected third parties in the
-            following circumstances:
-          </p>
           <ul className="list-disc space-y-1 pl-5">
-            <li>
-              <span className="font-semibold">
-                Service providers (processors)
-              </span>{" "}
-              – such as cloud hosting providers, analytics services, logging and
-              monitoring tools, and email/notification platforms. These
-              providers only process your data on our instructions and are
-              subject to appropriate contractual safeguards.
-            </li>
-            <li>
-              <span className="font-semibold">Garmin</span> – where required by
-              Garmin API functionality or to maintain the integration, and only
-              in accordance with Garmin’s terms.
-            </li>
-            <li>
-              <span className="font-semibold">Legal and compliance</span> – if
-              we are required to do so by law, regulation or valid legal
-              process, or to protect our rights, users, or the security of the
-              service.
-            </li>
+            <li><strong>Service providers</strong> (cloud, analytics, email)</li>
+            <li><strong>Garmin</strong> where required for API use</li>
+            <li><strong>Legal authorities</strong> if required by law</li>
           </ul>
           <p className="mt-3">
-            Train-R never shares identifiable fitness or activity data with
-            third parties for their own marketing purposes.
+            We never share identifiable fitness data for marketing.
           </p>
         </Section>
 
-        {/* Section 6 */}
+        {/* SECTION 6 */}
         <Section title="6. Data storage, security and retention">
           <p>
-            Your data is stored on secure servers using encrypted connections
-            (such as HTTPS/TLS) and protected by technical and organisational
-            measures, including access controls, monitoring, and regular
-            backups.
+            Data is stored securely with encryption and safeguards.
+            Garmin data is retained while your account is active.
           </p>
+
           <p className="mt-3 font-semibold">Retention</p>
-          <ul className="list-disc space-y-1 pl-5">
-            <li>
-              Garmin activity and training data is retained while your Train-R
-              account remains active.
-            </li>
-            <li>
-              Minimal logs may be retained for a longer period for security,
-              debugging and audit purposes.
-            </li>
+          <ul className="list-disc pl-5">
+            <li>Activity data stays while your account is active</li>
+            <li>Minimal logs may remain for debugging/security</li>
           </ul>
+
           <p className="mt-3">
-            If you disconnect Garmin or request deletion of your data, we will
-            delete or irreversibly anonymise your personal data within a
-            reasonable period, subject to any legal or regulatory requirements
-            to retain specific information.
+            You may request deletion or disconnect Garmin at any time.
           </p>
         </Section>
 
-        {/* Section 7 */}
+        {/* SECTION 7 */}
         <Section title="7. Your rights">
-          <p className="mb-2">
-            Depending on your location and applicable law, you may have the
-            following rights:
-          </p>
-          <ul className="list-disc space-y-1 pl-5">
-            <li>
-              <span className="font-semibold">Access</span> – to request a copy
-              of the personal data we hold about you.
-            </li>
-            <li>
-              <span className="font-semibold">Rectification</span> – to ask us
-              to correct inaccurate or incomplete data.
-            </li>
-            <li>
-              <span className="font-semibold">Erasure</span> – to request that
-              we delete your personal data in certain circumstances.
-            </li>
-            <li>
-              <span className="font-semibold">Restriction</span> – to ask us to
-              limit the processing of your data in certain situations.
-            </li>
-            <li>
-              <span className="font-semibold">Objection</span> – to object to
-              processing based on legitimate interests.
-            </li>
-            <li>
-              <span className="font-semibold">Portability</span> – to request
-              that we provide your data in a structured, commonly used and
-              machine-readable format, where technically feasible.
-            </li>
+          <p>You may have the right to:</p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Access your data</li>
+            <li>Correct inaccurate data</li>
+            <li>Request deletion</li>
+            <li>Restrict processing</li>
+            <li>Object to processing</li>
+            <li>Request data portability</li>
           </ul>
+
           <p className="mt-3">
-            To exercise any of these rights, please contact us at{" "}
+            Contact:{" "}
             <a
               href="mailto:info@train-r.com"
-              className="underline decoration-slate-500 underline-offset-4 hover:text-white"
+              className="underline decoration-slate-500 hover:text-white"
             >
               info@train-r.com
             </a>
-            . We may need to verify your identity before responding.
           </p>
         </Section>
 
-        {/* Section 8 */}
-        <Section title="8. Disconnecting Garmin or deleting your data">
+        {/* SECTION 8 */}
+        <Section title="8. Disconnecting Garmin or deleting data">
           <p>
-            You may disconnect Train-R from Garmin at any time via your Garmin
-            account settings (Garmin Connect) or within Train-R (where this
-            option is available). Once disconnected, we will no longer receive
-            new data from Garmin.
+            You may disconnect Garmin anytime via Garmin Connect or Train-R.
+            After disconnecting, no new data will be received.
           </p>
           <p className="mt-3">
-            To request deletion of stored Garmin data or your Train-R account,
-            please contact us at{" "}
+            To delete stored Garmin data or your account, email:{" "}
             <a
               href="mailto:info@train-r.com"
-              className="underline decoration-slate-500 underline-offset-4 hover:text-white"
+              className="underline decoration-slate-500 hover:text-white"
             >
               info@train-r.com
             </a>
-            . We will process your request within a reasonable timeframe,
-            subject to any legal obligations to retain certain records.
           </p>
         </Section>
 
-        {/* Section 9 */}
-        <Section title="9. International data transfers">
+        {/* SECTION 9 */}
+        <Section title="9. International transfers">
           <p>
-            Your data may be processed and stored in countries outside your own,
-            including countries that may not have the same level of data
-            protection laws as those in your jurisdiction.
-          </p>
-          <p className="mt-3">
-            Where required, we implement appropriate safeguards (such as
-            Standard Contractual Clauses or equivalent mechanisms) to ensure
-            that your personal data is protected in accordance with applicable
-            law.
+            Your data may be processed outside your home country.
+            We apply appropriate safeguards where required.
           </p>
         </Section>
 
-        {/* Section 10 */}
+        {/* SECTION 10 */}
         <Section title="10. Children">
           <p>
-            Train-R is not intended for children under the age of 16, and we do
-            not knowingly collect personal data from children under 16. If you
-            believe that a child has provided us with personal information,
-            please contact us so that we can take appropriate action.
+            Train-R is not intended for children under 16.
+            We do not knowingly collect data from children.
           </p>
         </Section>
 
-        {/* Section 11 */}
+        {/* SECTION 11 */}
         <Section title="11. Changes to this policy">
           <p>
-            We may update this Privacy Policy from time to time. When we make
-            material changes, we will update the “Last updated” date at the top
-            of this page and, where appropriate, notify you through the app,
-            email, or other communication channels.
+            We may update this Policy. When we do, we update the "Last updated"
+            date and may notify you via in-app alerts or email.
           </p>
         </Section>
 
-        {/* Section 12 */}
+        {/* SECTION 12 */}
         <Section title="12. Contact us">
           <p>
-            If you have any questions about this Privacy Policy or how we handle
-            your data, please contact:
-          </p>
-          <p className="mt-3">
-            <span className="font-semibold">Train-R</span>
+            <strong>Train-R</strong>
             <br />
             Email:{" "}
             <a
@@ -359,26 +374,93 @@ export default function PrivacyPage() {
           </p>
         </Section>
 
-        {/* Subtle accent line */}
         <div
           className="mt-10 h-px w-full"
           style={{ background: `linear-gradient(to right, transparent, ${ACCENT}, transparent)` }}
         />
-        <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-slate-500">
-          Train-R · AI Powered Training
-        </p>
       </div>
+
+      {/* ───────── FOOTER ───────── */}
+      <footer id="contact-section" className="bg-black border-t border-white/5 mt-20">
+        <div className="mx-auto max-w-6xl px-6 py-14 flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          
+          {/* LEFT: Signup */}
+          <div className="w-full max-w-sm">
+            <Image
+              src="/train-r-logo.png"
+              alt="Train-R logo"
+              width={200}
+              height={48}
+              className="h-14 w-auto mb-6"
+            />
+
+            <p className="text-sm text-white/70 mb-4">
+              Sign up to get early access.
+            </p>
+
+            <form onSubmit={handleSignupSubmit} className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  value={signupEmail}
+                  onChange={(e) => setSignupEmail(e.target.value)}
+                  className="flex-1 rounded-full bg-white/5 px-4 py-2 text-sm text-white placeholder-white/40 border border-white/10 focus:border-white/30"
+                />
+                <button
+                  type="submit"
+                  className="rounded-full bg-white text-black px-5 py-2 text-xs font-semibold uppercase tracking-[0.22em]"
+                >
+                  Join
+                </button>
+              </div>
+
+              {signupStatus === "success" && (
+                <p className="text-xs font-semibold italic mt-1" style={{ color: ACCENT }}>
+                  You&apos;re on the list. We&apos;ll be in touch soon.
+                </p>
+              )}
+
+              {signupError && (
+                <p className="text-xs text-red-400 mt-1">{signupError}</p>
+              )}
+            </form>
+          </div>
+
+          {/* RIGHT LINKS */}
+          <div className="flex flex-col sm:flex-row gap-16">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.28em] uppercase text-white/60 mb-3">
+                Support
+              </p>
+              <ul className="space-y-1 text-sm text-white/70">
+                <li><a href="/privacy" className="hover:text-white">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-white">Terms of Use</a></li>
+                <li><a href="/cookies" className="hover:text-white">Cookies</a></li>
+                <li><a href="mailto:info@train-r.com" className="hover:text-white">Email support</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <div className="border-t border-white/10">
+          <div className="mx-auto max-w-6xl px-6 py-3 text-[9px] uppercase text-white/50 tracking-[0.16em] flex justify-between">
+            <p>© {year} Train-R — All rights reserved</p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
 
-/* ---------- Reusable layout components ---------- */
+/* ───────── REUSABLE COMPONENTS ───────── */
 
 function Section({ title, children }) {
   return (
     <section className="mt-10 border-t border-slate-800 pt-8">
       <h2
-        className="text-lg font-semibold text-slate-50 md:text-xl"
+        className="text-lg font-semibold md:text-xl"
         style={{ color: SILVER }}
       >
         {title}

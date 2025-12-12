@@ -5,6 +5,10 @@ import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 import { User } from "lucide-react";
 
+// 🔥 NEW: Firebase imports
+import { db } from "../firebaseConfig";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
 
 const NAV_LEFT = ["Train", "Nutrition", "Journal"];
 const NAV_RIGHT = ["About", "Contact"]; // kept in case you want later
@@ -81,6 +85,11 @@ export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+    // Footer signup state
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupStatus, setSignupStatus] = useState(null); // "success" | "error" | null
+  const [signupError, setSignupError] = useState("");
+
   const scrollCarousel = (direction) => {
     if (!carouselRef.current) return;
     const container = carouselRef.current;
@@ -123,49 +132,81 @@ export default function Home() {
     }
   };
 
+const handleFooterSignupSubmit = async (e) => {
+  e.preventDefault();
+  setSignupStatus(null);
+  setSignupError("");
+
+  const email = signupEmail.trim();
+
+  if (!email) {
+    setSignupError("Please enter your email.");
+    return;
+  }
+
+  try {
+    // 🔥 Save to Firestore collection "waitlist"
+    await addDoc(collection(db, "waitlist"), {
+      email,
+      createdAt: serverTimestamp(),
+      source: "landing-footer",
+    });
+
+    setSignupStatus("success");
+    setSignupEmail("");
+
+    // Optional: hide success after a few seconds
+    setTimeout(() => setSignupStatus(null), 4000);
+  } catch (err) {
+    console.error("Error saving email:", err);
+    setSignupError("Something went wrong. Please try again.");
+  }
+};
+
+
+
   return (
     <main className="min-h-screen bg-black text-white">
       {/* -------- HEADER -------- */}
       <header className="fixed inset-x-0 top-0 z-30 bg-black/40 backdrop-blur-lg border-b border-white/5">
-{/* MOBILE HEADER */}
-<div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
-  {/* Mobile menu toggle */}
-  <button
-    type="button"
-    className="text-white/80 text-2xl"
-    onClick={() => setShowMobileMenu((prev) => !prev)}
-    aria-label="Toggle navigation"
-  >
-    ☰
-  </button>
+        {/* MOBILE HEADER */}
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:hidden">
+          {/* Mobile menu toggle */}
+          <button
+            type="button"
+            className="text-white/80 text-2xl"
+            onClick={() => setShowMobileMenu((prev) => !prev)}
+            aria-label="Toggle navigation"
+          >
+            ☰
+          </button>
 
-  {/* Logo */}
-  <div className="flex flex-1 items-center justify-center">
-    <Image
-      src="/train-r-logo.png"
-      alt="Train-R logo"
-      width={110}
-      height={26}
-      className="h-7 w-auto"
-      priority
-    />
-  </div>
+          {/* Logo */}
+          <div className="flex flex-1 items-center justify-center">
+            <Image
+              src="/train-r-logo.png"
+              alt="Train-R logo"
+              width={110}
+              height={26}
+              className="h-7 w-auto"
+              priority
+            />
+          </div>
 
-  {/* Account icon — clean, no circle */}
-  <button
-    type="button"
-    aria-label="Account"
-    onClick={() => {
-      if (typeof window !== "undefined") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    }}
-    className="text-white/80 hover:text-white transition p-1"
-  >
-    <User className="h-5 w-5" />
-  </button>
-</div>
-
+          {/* Account icon — clean, no circle */}
+          <button
+            type="button"
+            aria-label="Account"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="text-white/80 hover:text-white transition p-1"
+          >
+            <User className="h-5 w-5" />
+          </button>
+        </div>
 
         {/* MOBILE SLIDE-DOWN MENU */}
         {showMobileMenu && (
@@ -250,7 +291,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* -------- HERO (no scroll animation so it stays perfectly centred) -------- */}
+      {/* -------- HERO (CLEANED, MATCHES REST OF PAGE) -------- */}
       <section className="relative min-h-screen w-full pt-20">
         <Image
           src="/running.jpeg"
@@ -277,12 +318,16 @@ export default function Home() {
             the work that actually makes you better.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <button className="rounded-full border border-white bg-white text-black px-8 py-2 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-transparent hover:text-white transition-colors">
+          <div className="mt-8 flex flex-wrap items-center justify-center">
+            <button
+              type="button"
+              onClick={() => handleNavClick("Contact")}
+              className="inline-flex items-center justify-center rounded-full px-8 py-2 text-xs font-semibold uppercase tracking-[0.22em] bg-black/70 text-white hover:bg-white hover:text-black transition-colors"
+              style={{
+                border: "1px solid #000000ff", // subtle neon yellow border
+              }}
+            >
               Get early access
-            </button>
-            <button className="rounded-full border border-white/40 px-8 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/80 hover:border-white hover:text-white transition-colors">
-              View demo
             </button>
           </div>
 
@@ -291,6 +336,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* -------- HOW IT WORKS (TWO-COLUMN) -------- */}
       <section id="train-section" className="bg-black py-20">
@@ -993,22 +1039,43 @@ export default function Home() {
               </p>
 
               {/* Email signup form */}
+                     {/* Email signup form */}
               <form
-                onSubmit={(e) => e.preventDefault()}
-                className="flex items-center gap-2"
+                onSubmit={handleFooterSignupSubmit}
+                className="flex flex-col gap-2"
               >
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="flex-1 rounded-full bg-white/5 px-4 py-2 text-sm text-white placeholder-white/40 border border-white/10 focus:border-white/30 focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="rounded-full bg-white text-black px-5 py-2 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-white/80 transition"
-                >
-                  Join
-                </button>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    className="flex-1 rounded-full bg-white/5 px-4 py-2 text-sm text-white placeholder-white/40 border border-white/10 focus:border-white/30 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-full bg-white text-black px-5 py-2 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-white/80 transition"
+                  >
+                    Join
+                  </button>
+                </div>
+
+               {signupStatus === "success" && (
+                  <p
+                    className="text-xs font-semibold italic"
+                    style={{ color: "#E6FF3B" }}
+                  >
+                    You&apos;re on the list. We&apos;ll be in touch soon.
+                  </p>
+                )}
+
+                
+
+                {signupError && (
+                  <p className="text-xs text-red-400">{signupError}</p>
+                )}
               </form>
+
             </div>
 
             {/* RIGHT SECTIONS */}
